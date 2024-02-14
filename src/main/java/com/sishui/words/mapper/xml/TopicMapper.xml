@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sishui.words.mapper.TopicMapper">
+    <select id="countTotalLikesByUserId" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM like_table al
+        INNER JOIN topic a ON al.content_id = a.topic_id
+        WHERE a.user_id = #{userId}
+    </select>
+</mapper>
