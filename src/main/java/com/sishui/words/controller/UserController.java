@@ -1,26 +1,27 @@
 package com.sishui.words.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.sishui.words.pojo.Follow;
 import com.sishui.words.pojo.User;
+import com.sishui.words.req.UserREQ;
 import com.sishui.words.service.IContentService;
 import com.sishui.words.service.IFollowService;
 import com.sishui.words.service.ITopicService;
 import com.sishui.words.service.IUserService;
 import com.sishui.words.service.impl.TopicServiceImpl;
 import com.sishui.words.service.impl.WeChatAuthServiceImpl;
-import com.sishui.words.vo.Constants;
-import com.sishui.words.vo.LoginRequest;
-import com.sishui.words.vo.Result;
-import com.sishui.words.vo.UserDataVO;
+import com.sishui.words.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -30,8 +31,7 @@ public class UserController {
     @Autowired
     private IUserService userService;
 
-    @Autowired
-    private ApplicationContext applicationContext;
+
 
     @PostMapping("/login")
     private Result login(@RequestBody LoginRequest loginRequest) throws Exception {
@@ -90,16 +90,7 @@ public class UserController {
 
         UserDataVO userDataVO = new UserDataVO();
 
-        // 获取所有实现了 IContentService 接口的 bean
-        Map<String, IContentService> map = applicationContext.getBeansOfType(IContentService.class);
-        // 遍历 Map 集合
-        //动态数量
-        int sumOfCount = 0;
-        for (Map.Entry<String, IContentService> entry : map.entrySet()) {
-            IContentService contentService = entry.getValue(); // 获取 bean 实例
-            // 调用 IContentService 接口的 get 方法
-            sumOfCount += contentService.getContentCount(user.getUserId());
-        }
+
         QueryWrapper<Follow> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("follower_id", userId);
 
@@ -110,7 +101,7 @@ public class UserController {
         //关注
         userDataVO.setFollowCount(Math.toIntExact(followService.getBaseMapper().selectCount(queryWrapper)));
         //动态
-        userDataVO.setPostCount(sumOfCount);
+        userDataVO.setPostCount(userService.getPostCount(userId));
         //昵称
         userDataVO.setNickname(userDetial.getNickname());
         //头像
@@ -134,6 +125,119 @@ public class UserController {
 
         return Result.success(ans);
     }
+
+    @PostMapping("/my_fans")
+    public Result getUserFans(@RequestBody UserREQ userREQ) {
+        if (userREQ == null || StringUtils.isEmpty(userREQ.getUserId())) {
+           return Result.error("参数错误");
+        }
+        String userId = userREQ.getUserId();
+        Map<String, Object> result = new HashMap<>();
+        long offset = userREQ.getOffset();
+        QueryWrapper<Follow> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("follower_id", userId);
+
+        User userDetial = userService.getById(userId);
+        if (offset == 0) {
+            result.put("follow_count", String.valueOf(Math.toIntExact(followService.getBaseMapper().selectCount(queryWrapper))));
+            result.put("fan_count", String.valueOf(userDetial.getFansCount()));
+        }
+
+        int perPageCount = 12;
+        userREQ.setSize(perPageCount);
+
+        List<User> users = followService.getFollowUsers(userREQ);
+        if (users.size() == 0) {
+            result.put("users", new ArrayList<>());
+            result.put("more", "nomore");
+            return Result.success(result);
+        }
+
+        List<Map<String, Object>> data = new ArrayList<>();
+        for (User user : users) {
+            Map<String, Object> item = new HashMap<>();
+            item.put("user_id", user.getUserId());
+            item.put("nickname", user.getNickname());
+            item.put("avatar", user.getAvatar());
+            item.put("post_count", userService.getPostCount(userId));
+            item.put("fans_count", user.getFansCount());
+
+
+            if (userId != null) {
+                boolean isFollow = followService.isFollowingUser(user.getUserId(), userId);
+                item.put("is_follow", isFollow ? 1 : 0);
+                item.put("is_fans", 1);
+            } else {
+                item.put("is_follow", 0);
+                item.put("is_fans", 0);
+            }
+
+            data.add(item);
+        }
+
+        result.put("users", data);
+        result.put("more", (data.size() == perPageCount ? "more" : "nomore"));
+
+        return Result.success(result);
+    }
+
+
+
+    @PostMapping("/my_followers")
+    public Result getMyFollowers(@RequestBody UserREQ userREQ) {
+        if (userREQ == null || StringUtils.isEmpty(userREQ.getUserId())) {
+            return Result.error("参数错误");
+        }
+
+        Map<String, Object> result = new HashMap<>();
+
+        int perPageCount = 12;
+        userREQ.setSize(perPageCount);
+        List<User> users = followService.getFollowedUsers(userREQ);
+        if (users.isEmpty()) {
+            result.put("users", new ArrayList<>());
+            result.put("more", "nomore");
+            return Result.success(result);
+        }
+
+        List<Map<String, Object>> data = new ArrayList<>();
+        for (User user : users) {
+            Map<String, Object> item = new HashMap<>();
+            item.put("user_id", user.getUserId());
+            item.put("nickname", user.getNickname());
+            item.put("avatar", user.getAvatar());
+            item.put("post_count", userService.getPostCount(user.getUserId()));
+            item.put("fans_count", user.getFansCount());
+
+            item.put("is_follow", 1);
+            boolean isFans = followService.isFollowingUser(user.getUserId(), userREQ.getUserId());
+            item.put("is_fans", isFans ? 1 : 0);
+            data.add(item);
+        }
+
+        result.put("users", data);
+        result.put("more", (data.size() == perPageCount ? "more" : "nomore"));
+
+        return Result.success(result);
+    }
+
+    @PostMapping("/set_info")
+    public Result setUserInfo(@RequestBody User user) {
+        if (user == null || user.getUserId() == null) {
+            return Result.error("未登录");
+        }
+        //TODO 参数敏感信息校验
+        if (StringUtils.isEmpty(user.getNickname())) {
+            return Result.error("昵称不能为空");
+        }
+
+        User oldUser = userService.getById(user.getUserId());
+        oldUser.setNickname(user.getNickname());
+        oldUser.setSign(user.getSign());
+        userService.save(oldUser);
+        return Result.success();
+    }
+
 
    /* @GetMapping("/")
     public Result getAllUsers() {

@@ -1,16 +1,18 @@
 package com.sishui.words.controller;
 
-import com.sishui.words.vo.LoginSetting;
-import com.sishui.words.vo.Setting;
+import com.sishui.words.vo.*;
 import com.sishui.words.service.ITopicService;
-import com.sishui.words.vo.HomeData;
-import com.sishui.words.vo.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Api(value = "配置")
 @RestController
@@ -48,8 +50,17 @@ public class SettingController {
         return null;
     }
 
+    @PostMapping("/mine")
+    public Result getMine() {
+        List<Map<String, Object>> data = new ArrayList<>();
+        Map<String, Object> background = new HashMap<>();
+        background.put("background", Constants.MINE_BACKGROUND);
+        data.add(background);
+        return Result.success(background);
+    }
+
     @PostMapping("login")
-    private Result login() {
+    public Result login() {
         LoginSetting loginSetting = new LoginSetting();
         loginSetting.setTitle("知心一言");
         loginSetting.setBackground("https://q.zhuige.com/wp-content/uploads/2022/07/62778b1dc69ac.jpg");

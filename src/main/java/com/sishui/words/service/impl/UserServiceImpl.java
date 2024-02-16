@@ -1,14 +1,19 @@
 package com.sishui.words.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sishui.words.mapper.UserMapper;
 import com.sishui.words.pojo.User;
 import com.sishui.words.pojo.UserTagRelation;
+import com.sishui.words.req.UserREQ;
+import com.sishui.words.service.IContentService;
 import com.sishui.words.service.IUserService;
 import com.sishui.words.service.IUserTagRelationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -76,4 +81,29 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     public List<User> getUsersWithoutSelfFollow(Integer userId) {
         return baseMapper.selectUsersWithoutSelfFollow(userId);
     }
+
+
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    @Override
+    public int getPostCount(String userId) {
+        // 获取所有实现了 IContentService 接口的 bean
+        Map<String, IContentService> map = applicationContext.getBeansOfType(IContentService.class);
+        // 遍历 Map 集合
+        //动态数量
+        int sumOfCount = 0;
+        for (Map.Entry<String, IContentService> entry : map.entrySet()) {
+            IContentService contentService = entry.getValue(); // 获取 bean 实例
+            // 调用 IContentService 接口的 get 方法
+            sumOfCount += contentService.getContentCount(userId);
+        }
+        return sumOfCount;
+    }
+
+    @Override
+    public int getUserFansCount(String userId) {
+        return 0;
+    }
+
 }
