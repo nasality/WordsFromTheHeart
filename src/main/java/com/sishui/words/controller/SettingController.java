@@ -54,7 +54,7 @@ public class SettingController {
     public Result getMine() {
         List<Map<String, Object>> data = new ArrayList<>();
         Map<String, Object> background = new HashMap<>();
-        background.put("background", Constants.MINE_BACKGROUND);
+        background.put("background", Constants.MINE_BACKGROUND.getValue());
         data.add(background);
         return Result.success(background);
     }

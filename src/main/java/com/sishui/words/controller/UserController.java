@@ -234,7 +234,7 @@ public class UserController {
         User oldUser = userService.getById(user.getUserId());
         oldUser.setNickname(user.getNickname());
         oldUser.setSign(user.getSign());
-        userService.save(oldUser);
+        userService.updateById(oldUser);
         return Result.success();
     }
 
