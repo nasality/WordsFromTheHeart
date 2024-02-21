@@ -29,7 +29,7 @@ public class FileController {
         long expireSeconds = 3600;
         String upToken = auth.uploadToken(bucket, null, expireSeconds, putPolicy);
         data.put("upToken", upToken);
-        data.put("keyPrefix", "image");
+        data.put("keyPrefix", "images/userImages/");
         return Result.success(data);
     }
 }

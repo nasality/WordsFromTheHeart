@@ -69,4 +69,18 @@ public class SettingController {
         loginSetting.setYszc("/pages/base/page/page?page_id=148");
         return Result.success(loginSetting);
     }
+
+    @PostMapping("/create")
+    public Result createSetting() {
+        Map<String, Object> data = new HashMap<>();
+        Map<String,List<Map<String, Object>>>  map = new HashMap<>();
+        List<Map<String, Object>> dataList = new ArrayList<>();
+        data.put("image", "https://q.zhuige.com/wp-content/uploads/2022/07/img.png");
+        data.put("link", "/pages/bbs/post/post");
+        data.put("require_login", 1);
+        data.put("title", "图文");
+        dataList.add(data);
+        map.put("items", dataList);
+        return Result.success(map);
+    }
 }

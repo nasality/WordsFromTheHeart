@@ -57,6 +57,7 @@ public class UserController {
             user.setRegistrationDate(Timestamp.from(Instant.now()));
             user.setLastLoginTime(Timestamp.from(Instant.now()));
             user.setFirst(1);
+            user.setAvatar(Constants.DEFAULT_AVATAR.getValue());
             userService.getBaseMapper().insert(user);
         } else {
             user.setNickname(nickname);
@@ -234,6 +235,8 @@ public class UserController {
         User oldUser = userService.getById(user.getUserId());
         oldUser.setNickname(user.getNickname());
         oldUser.setSign(user.getSign());
+        oldUser.setCover(user.getCover());
+        oldUser.setAvatar(user.getAvatar());
         userService.updateById(oldUser);
         return Result.success();
     }
