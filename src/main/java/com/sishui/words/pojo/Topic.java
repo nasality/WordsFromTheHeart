@@ -12,7 +12,7 @@ import java.sql.Timestamp;
 public class Topic {
     @TableId("topic_id")
     private Integer topicId;
-    private Integer userId;
+    private String userId;
     private Integer likeCount;
     private String location;
     private Timestamp createTime;

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+//话题@的用户
 public class Mention {
     private String topicId;
     private String userId;
