@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TagContentRelation {
-    private Integer tagId;
-    private Integer relatedId;
+public class TopicForumRelation {
+    private Integer forumId;
+    private Integer topicId;
 }

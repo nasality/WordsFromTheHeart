@@ -1,16 +1,19 @@
 package com.sishui.words.pojo;
 
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Date;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Image {
-    @TableId("image_id")
-    private Integer imageId;
-    private Integer topicId;
-    private String imagePath;
+public class Forum {
+    @TableId("id")
+    private Integer id;
+    private String name;
+    private Date createTime;
 }

@@ -7,8 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Tab {
-    private Integer id;
-    private String name;
-    private Integer hotnessIndex;
+public class SubjectContentRelation {
+    private Integer subjectId;
+    private Integer relatedId;
 }
