@@ -1,9 +1,12 @@
 package com.sishui.words.controller;
 
+import com.sishui.words.pojo.Tab;
+import com.sishui.words.service.ITabService;
 import com.sishui.words.vo.*;
 import com.sishui.words.service.ITopicService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +21,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/setting")
 public class SettingController {
-
+    @Autowired
+    private ITabService tabService;
 
     @ApiOperation("获取配置 全局")
     @PostMapping("/global")
@@ -39,6 +43,14 @@ public class SettingController {
     @ApiOperation("获取配置 首页")
     @PostMapping("/home")
     public Result getHome() {
+        Map<String, Object> data = new HashMap<>();
+        data.put("list_switch", 1);
+        data.put("tab_type", 1);
+        data.put("tabs", tabService.getHomeTabList());
+        data.put("cur_tab", "1");
+        data.put("tab_switch", 1);
+
+
         HomeData homeData = new HomeData();
 
         //热门话题  Redis 实现
@@ -47,7 +59,7 @@ public class SettingController {
         //推荐文章
         //Tab查询
         //TODO 未完成
-        return null;
+        return Result.success(data);
     }
 
     @PostMapping("/mine")

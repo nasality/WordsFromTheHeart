@@ -241,27 +241,4 @@ public class UserController {
         return Result.success();
     }
 
-
-   /* @GetMapping("/")
-    public Result getAllUsers() {
-        List<User> users = userService.getAllUsers();
-    }
-
-    // 创建用户
-    @PostMapping("/")
-    public Result createUser(@RequestBody User user) {
-        User createdUser = userService.createUser(user);
-    }
-
-    // 更新用户信息
-    @PutMapping("/{userId}")
-    public Result updateUser(@PathVariable int userId, @RequestBody User user) {
-        User updatedUser = userService.updateUser(userId, user);
-    }
-
-    // 删除用户
-    @DeleteMapping("/{userId}")
-    public Result deleteUser(@PathVariable int userId) {
-        userService.deleteUser(userId);
-    }*/
 }

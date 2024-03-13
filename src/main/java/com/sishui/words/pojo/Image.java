@@ -13,4 +13,6 @@ public class Image {
     private Integer imageId;
     private Integer topicId;
     private String imagePath;
+    private Integer width;
+    private Integer height;
 }

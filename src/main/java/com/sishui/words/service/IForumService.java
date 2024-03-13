@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface IForumService extends IService<Forum> {
     List<Forum> getListById(Integer id);
+
+    Forum getForumByTopicId(Integer topicId);
 }

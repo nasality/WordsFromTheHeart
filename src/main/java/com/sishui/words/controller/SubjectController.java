@@ -48,7 +48,6 @@ public class SubjectController {
         Topic topic = new Topic();
         topic.setTopicDetail(topicVO.getContent());
         topic.setCreateTime(new Timestamp(System.currentTimeMillis()));
-
         return null;
     }
 

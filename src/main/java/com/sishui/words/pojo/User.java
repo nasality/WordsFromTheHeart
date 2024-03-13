@@ -28,4 +28,8 @@ public class User {
     @TableField(exist = false)
     private Integer first;
     private String cover;
+    @TableField(exist = false, value = "0")
+    private Integer isFollow;
+    @TableField(exist = false)
+    private Integer isMe;
 }

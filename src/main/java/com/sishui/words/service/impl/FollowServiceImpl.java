@@ -42,7 +42,12 @@ public class FollowServiceImpl extends ServiceImpl<FollowMapper, Follow> impleme
         return ret;
     }
 
-
+    /**
+     * A 是否 关注 B
+     * @param follower A
+     * @param followed B
+     * @return Boolean
+     */
     //A 是否 关注 B
     @Override
     public boolean isFollowingUser(String follower, String followed) {
