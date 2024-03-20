@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @TableName("like_table")
 public class Like {
-    private Integer userId;
+    private String userId;
     private Integer contentId;
 }

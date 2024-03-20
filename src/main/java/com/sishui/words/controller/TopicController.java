@@ -3,6 +3,8 @@ package com.sishui.words.controller;
 import com.sishui.words.pojo.*;
 import com.sishui.words.service.*;
 import com.sishui.words.util.DateFormat;
+import com.sishui.words.util.HttpRequest;
+import com.sishui.words.vo.Constants;
 import com.sishui.words.vo.Result;
 
 import com.sishui.words.vo.TopicResponseVO;
@@ -11,9 +13,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.NumberUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +55,9 @@ public class TopicController {
 
     @PostMapping("topic_create")
     public Result topicPost(@RequestBody TopicRequest topicRequest) {
+        if (topicRequest.getForumId() == null) {
+            return Result.error("请选择圈子");
+        }
         //TODO 异常处理
         try {
             //创建新话题
@@ -62,8 +71,8 @@ public class TopicController {
 
             //创建图片
             for (String image : topicRequest.getImages()) {
-                Image newImage = new Image();
-                newImage.setImagePath(image);
+                Image newImage = HttpRequest.getImageInfo(image);
+                assert newImage != null;
                 newImage.setTopicId(topic.getTopicId());
                 imageService.save(newImage);
             }
@@ -84,6 +93,7 @@ public class TopicController {
                 if ((oldSubject = subjectService.getSubjectByName(subject)) == null) {
                     oldSubject = new Subject();
                     oldSubject.setName(subject);
+                    oldSubject.setCreateTime(new Timestamp(System.currentTimeMillis()));
                     subjectService.save(oldSubject);
                 }
                 //话题
@@ -93,7 +103,8 @@ public class TopicController {
                 subjectContentRelationService.save(subjectContentRelation);
             }
         } catch (Exception e) {
-            return Result.error("新建话题失败");
+            System.out.println(e);
+            return Result.error("服务器异常");
         }
 
         return Result.success();
@@ -145,8 +156,8 @@ public class TopicController {
 
         Map<String, Object> data = new HashMap<>();
         //是否开放举报窗口
-        data.put("is_report", 0);
-        data.put("limit", "free");
+        data.put("is_report", true);
+        //data.put("limit", "free");
 
 
 
@@ -164,6 +175,11 @@ public class TopicController {
             topicResponse.setIsComment(commentService.getIsCommentByUserIdAndTopicId(user.getUserId(), topic.getTopicId()));
             topicResponse.setIsLike(likeService.getIsLikeByUserIdAndContentId(user.getUserId(), topic.getTopicId()));
             //是否收藏暂不添加
+            topicResponse.setIsFavorite(0);
+        } else {
+            topicResponse.setIsComment(0);
+            topicResponse.setIsLike(0);
+            topicResponse.setIsFavorite(0);
         }
 
         //圈子
@@ -172,10 +188,12 @@ public class TopicController {
         topicResponse.setAddress(topic.getLocation());
 
 
+        //ID
+        topicResponse.setId(topic.getTopicId());
 
 
         //设置图片
-        topicResponse.setImages(imageService.getImageListById(topic.getTopicId()));
+        //topicResponse.setImages(imageService.getImageListById(topic.getTopicId()));
 
         //评论
         topicResponse.setCommentCount(commentService.getCommentCountById(topic.getTopicId()));
@@ -187,7 +205,10 @@ public class TopicController {
         topicResponse.setType("image");
         //内容
         topicResponse.setExcerpt(topic.getTopicDetail());
-
+        //点赞数量
+        topicResponse.setLikeCount(topic.getLikeCount());
+        topicResponse.setPostType(Constants.ZHUIGE_TOPIC.getValue());
+        topicResponse.setLimit("free");
         data.put("topic", topicResponse);
         return Result.success(data);
     }

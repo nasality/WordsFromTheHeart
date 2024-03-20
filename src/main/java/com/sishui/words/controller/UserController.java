@@ -13,6 +13,7 @@ import com.sishui.words.service.IUserService;
 import com.sishui.words.service.impl.TopicServiceImpl;
 import com.sishui.words.service.impl.WeChatAuthServiceImpl;
 import com.sishui.words.vo.*;
+import org.apache.ibatis.io.ResolverUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.*;
@@ -239,6 +240,18 @@ public class UserController {
         oldUser.setAvatar(user.getAvatar());
         userService.updateById(oldUser);
         return Result.success();
+    }
+
+    @PostMapping("/init_info")
+    public Result initUserInfo(@RequestBody User user) {
+        User oldUser = userService.getUserById(user.getUserId());
+        oldUser.setNickname(user.getNickname());
+        oldUser.setAvatar(user.getAvatar());
+        if (userService.updateById(oldUser)) {
+            return Result.success("修改成功");
+        } else {
+            return Result.error("修改失败");
+        }
     }
 
 }

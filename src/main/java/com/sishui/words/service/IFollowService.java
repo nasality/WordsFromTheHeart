@@ -15,4 +15,9 @@ public interface  IFollowService extends IService<Follow> {
 
 
     List<User> getFollowUsers(UserREQ userREQ);
+    
+
+    Follow getByFollowerIdAndFollowedId(String followerId, String userId);
+
+    boolean unFollow(String followerId, String userId);
 }

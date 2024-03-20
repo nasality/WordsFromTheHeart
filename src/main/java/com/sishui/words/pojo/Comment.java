@@ -16,7 +16,7 @@ public class Comment {
     private Integer postId;
     private String userId;
     private String content;
-    private Integer like;
+    private Integer likeCount;
     private Integer parentId;
     private Date time;
     @TableField(exist = false)

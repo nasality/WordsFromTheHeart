@@ -35,7 +35,7 @@ public class SubjectController {
         return Result.success(data);
     }
 
-    @PostMapping("/topic_cteate")
+   /* @PostMapping("/topic_cteate")
     public Result topicCreate(@RequestBody TopicVO topicVO) {
         //TODO 发帖频繁检验
         if (topicVO == null) {
@@ -44,12 +44,26 @@ public class SubjectController {
         if (topicVO.getUserId() == null) {
             return Result.error("未登录");
         }
+
+
         //创建新话题
         Topic topic = new Topic();
         topic.setTopicDetail(topicVO.getContent());
         topic.setCreateTime(new Timestamp(System.currentTimeMillis()));
+        topic.setLikeCount(0);
+        topic.setLocation(topicVO.getAddress());
+        topic.setUserId(topicVO.getUserId());
+
+        for (String subject : topicVO.getSubjects()) {
+            if (subjectService.getSubjectByName(subject) == null) {
+                Subject newSubject = new Subject();
+                newSubject.setName(subject);
+                newSubject.setCreateTime(new Timestamp(System.currentTimeMillis()));
+                subjectService.save(newSubject);
+            }
+        }
         return null;
-    }
+    }*/
 
 
 }

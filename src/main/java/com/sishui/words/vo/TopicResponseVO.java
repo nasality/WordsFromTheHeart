@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @AllArgsConstructor
@@ -16,7 +17,7 @@ public class TopicResponseVO {
     private Integer id;
     private String excerpt;
     private Forum forum;
-    private List<Image> images;
+    private List<Map<String, Image>> images;
     private Integer likeCount;
     private String limit;
     private String address;
@@ -30,10 +31,10 @@ public class TopicResponseVO {
     private User author;
     private Long commentCount;
     private List<Comment> comments;
-    @TableField(exist = false, value = "0")
+    @TableField(exist = false)
     private Integer isComment;
-    @TableField(exist = false, value = "0")
+    @TableField(exist = false)
     private Integer isFavorite;
-    @TableField(exist = false, value = "0")
+    @TableField(exist = false)
     private Integer isLike;
 }

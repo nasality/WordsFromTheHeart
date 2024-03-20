@@ -13,6 +13,7 @@ import com.sishui.words.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -24,6 +25,8 @@ public class FollowServiceImpl extends ServiceImpl<FollowMapper, Follow> impleme
 
     @Autowired
     private IUserService userService;
+
+
 
     @Override
     public List<User> getFollowUsers(UserREQ userREQ) {
@@ -41,6 +44,26 @@ public class FollowServiceImpl extends ServiceImpl<FollowMapper, Follow> impleme
         }
         return ret;
     }
+
+    @Override
+    public Follow getByFollowerIdAndFollowedId(String followerId, String userId) {
+        QueryWrapper<Follow> wrapper = new QueryWrapper<>();
+        wrapper.eq("follower_id", followerId);
+        wrapper.eq("followed_id", userId);
+        return baseMapper.selectOne(wrapper);
+    }
+
+
+    @Transactional
+    @Override
+    public boolean unFollow(String followerId, String userId) {
+        QueryWrapper<Follow> wrapper = new QueryWrapper<>();
+        wrapper.eq("follower_id", followerId);
+        wrapper.eq("followed_id", userId);
+        userService.unFollow(userId);
+        return baseMapper.delete(wrapper) > 0;
+    }
+
 
     /**
      * A 是否 关注 B

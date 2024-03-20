@@ -14,7 +14,7 @@ import java.sql.Timestamp;
 @TableName("subject")
 public class Subject {
     @TableId("subject_id")
-    private int subjectId;
+    private Integer subjectId;
     private String name;
     private Timestamp createTime;
 }

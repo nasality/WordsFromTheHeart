@@ -5,4 +5,5 @@ import com.sishui.words.pojo.Topic;
 
 public interface ITopicService extends IService<Topic> {
     Integer countTotalLikesByUserId(String userId);
+    Boolean updateTopicLike(Integer topicId) throws Exception;
 }

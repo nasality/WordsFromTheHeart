@@ -16,4 +16,9 @@ public interface IUserService extends IService<User> {
     int getUserFansCount(String userId);
 
 
+    User getUserById(String userId);
+
+    boolean unFollow(String userId);
+
+    boolean follow(String userId);
 }

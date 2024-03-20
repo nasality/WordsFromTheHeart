@@ -1,9 +1,9 @@
 package com.sishui.words.vo;
 
 public enum Constants {
-    DEFAULT_COVER("http://s8gqejvtl.hb-bkt.clouddn.com/images/placeholder.jpg"),
-    MINE_BACKGROUND("http://s8gqejvtl.hb-bkt.clouddn.com/images/bjj.png"),
-    DEFAULT_AVATAR("http://s8gqejvtl.hb-bkt.clouddn.com/images/avatar.jpg"),
+    DEFAULT_COVER("http://uploads.words-from.fun/images/placeholder.jpg"),
+    MINE_BACKGROUND("http://uploads.words-from.fun/images/bjj.png"),
+    DEFAULT_AVATAR("http://uploads.words-from.fun/images/avatar.jpg"),
     ZHUIGE_TOPIC("zhuige_bbs_topic");
     private final String value;
 

@@ -2,6 +2,7 @@ package com.sishui.words.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.sishui.words.pojo.Image;
 import com.sishui.words.pojo.Topic;
 import com.sishui.words.service.*;
 import com.sishui.words.util.DateFormat;
@@ -68,7 +69,9 @@ public class PostController {
 
                 topicResponseVO.setForum(forumService.getForumByTopicId(record.getTopicId()));
                 topicResponseVO.setExcerpt(record.getTopicDetail());
-                topicResponseVO.setImages(imageService.getImageListById(record.getTopicId()));
+                List<Image> images = imageService.getImageListById(record.getTopicId());
+                List<Map<String, Image>> imagesMapList = this.getImageMapList(images);
+                topicResponseVO.setImages(imagesMapList);
                 topicResponseVO.setLikeCount(record.getLikeCount());
                 //设置评论数量
                 topicResponseVO.setCommentCount(0L);
@@ -92,6 +95,16 @@ public class PostController {
             data.put("more", "more");
         }
         return Result.success(data);
+    }
+
+    private List<Map<String, Image>> getImageMapList(List<Image> images) {
+        List<Map<String, Image>> ret = new ArrayList<>();
+        for (Image image : images) {
+            Map<String, Image> map = new HashMap<>();
+            map.put("image", image);
+            ret.add(map);
+        }
+        return ret;
     }
 
     @Data

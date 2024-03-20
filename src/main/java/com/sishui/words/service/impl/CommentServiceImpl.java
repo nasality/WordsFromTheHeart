@@ -38,4 +38,9 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         wrapper.eq("user_id", userId);
         return baseMapper.selectCount(wrapper) > 0 ? 1 : 0;
     }
+
+    @Override
+    public int saveComment(Comment comment) {
+        return baseMapper.insert(comment);
+    }
 }

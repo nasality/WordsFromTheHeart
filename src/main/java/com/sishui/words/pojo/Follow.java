@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 public class Follow {
     @TableId("follow_id")
     private Integer followId;
-    private Integer followerId;
-    private Integer followedId;
+    private String  followerId;
+    private String followedId;
     private Timestamp followTime;
 }

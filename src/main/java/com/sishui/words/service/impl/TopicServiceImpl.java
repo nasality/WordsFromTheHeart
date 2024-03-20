@@ -20,4 +20,20 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
     public Integer countTotalLikesByUserId(String userId) {
         return baseMapper.countTotalLikesByUserId(userId);
     }
+
+    @Override
+    public Boolean updateTopicLike(Integer topicId) throws Exception {
+        if (topicId == null) {
+            throw new NullPointerException();
+        }
+        int update = 0;
+        try {
+            Topic topic = baseMapper.selectById(topicId);
+            topic.setLikeCount(topic.getLikeCount() + 1);
+            update = baseMapper.updateById(topic);
+        } catch (Exception e) {
+            throw new Exception();
+        }
+        return update > 0;
+    }
 }

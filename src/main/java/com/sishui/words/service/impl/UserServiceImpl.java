@@ -106,4 +106,29 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         return 0;
     }
 
+    @Override
+    public User getUserById(String userId) {
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("user_id", userId);
+        return baseMapper.selectOne(wrapper);
+    }
+
+    @Override
+    public boolean unFollow(String userId) {
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("user_id", userId);
+        User user = baseMapper.selectOne(wrapper);
+        user.setFansCount(user.getFansCount() - 1);
+        return baseMapper.updateById(user) > 0;
+    }
+
+    @Override
+    public boolean follow(String userId) {
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("user_id", userId);
+        User user = baseMapper.selectOne(wrapper);
+        user.setFansCount(user.getFansCount() + 1);
+        return baseMapper.updateById(user) > 0;
+    }
+
 }

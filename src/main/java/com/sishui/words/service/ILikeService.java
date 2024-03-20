@@ -5,4 +5,6 @@ import com.sishui.words.pojo.Like;
 
 public interface ILikeService extends IService<Like> {
     Integer getIsLikeByUserIdAndContentId(String userId, Integer topicId);
+
+    boolean updateLikeCount(String userId, Integer postId) throws Exception;
 }
