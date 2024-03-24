@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sishui.words.pojo.Image;
 import com.sishui.words.pojo.Topic;
+import com.sishui.words.req.HomeListRequest;
 import com.sishui.words.service.*;
 import com.sishui.words.util.DateFormat;
 import com.sishui.words.vo.Constants;
@@ -51,12 +52,11 @@ public class PostController {
 
         //话题列表
         List<TopicResponseVO> topicList = new ArrayList<>();
-        IPage<Topic> page = new Page<>();
-        page.setCurrent(request.offset);
-        page.setSize(PAGE_SIZE);
+
         if (Objects.equals(request.getPostType(), "1")) {
-            IPage<Topic> rawTopicList = topicService.page(page);
-            for (Topic record : rawTopicList.getRecords()) {
+            List<Topic> rawTopicList = topicService.selectTopicPage(request);
+
+            for (Topic record : rawTopicList) {
                 TopicResponseVO topicResponseVO = new TopicResponseVO();
                 topicResponseVO.setAddress(record.getLocation());
                 topicResponseVO.setId(record.getTopicId());
@@ -76,7 +76,7 @@ public class PostController {
                 //设置评论数量
                 topicResponseVO.setCommentCount(0L);
                 //获取评论
-                topicResponseVO.setComments(new ArrayList<>());
+                topicResponseVO.setComments(commentService.getCommentListByPostId(record.getTopicId()));
 
                 topicList.add(topicResponseVO);
                 //设置评论数量
@@ -107,13 +107,5 @@ public class PostController {
         return ret;
     }
 
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    private static class HomeListRequest {
-        private Integer offset;
-        private String os;
-        private String postType;
-    }
 
 }

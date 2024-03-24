@@ -14,4 +14,6 @@ public interface ICommentService extends IService<Comment> {
     int getIsCommentByUserIdAndTopicId(String userId, Integer topicId);
 
     int saveComment(Comment comment);
+
+    List<Comment> findByArticleId(Integer topicId);
 }

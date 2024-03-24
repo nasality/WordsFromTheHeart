@@ -23,8 +23,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     @Override
     public List<Comment> getCommentListByPostId(Integer topicId) {
         if (topicId == null) return null;
-        QueryWrapper<Comment> wrapper = new QueryWrapper<>();
-        return null;
+        return baseMapper.findByArticleId(topicId);
     }
 
     @Override
@@ -42,5 +41,13 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     @Override
     public int saveComment(Comment comment) {
         return baseMapper.insert(comment);
+    }
+
+    @Override
+    public List<Comment> findByArticleId(Integer topicId) {
+        if (topicId == null) {
+            return null;
+        }
+        return baseMapper.findByArticleId(topicId);
     }
 }

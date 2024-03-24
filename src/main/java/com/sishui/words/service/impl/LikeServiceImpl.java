@@ -38,7 +38,12 @@ public class LikeServiceImpl extends ServiceImpl<LikeMapper, Like> implements IL
         wrapper.eq("content_id", postId);
         Like like = baseMapper.selectOne(wrapper);
         if (like != null) {
-            baseMapper.delete(wrapper);
+            try {
+                baseMapper.delete(wrapper);
+                topicService.decreaseTopicLike(postId);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
             return false;
         }
         like = new Like();

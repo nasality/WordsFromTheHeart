@@ -1,6 +1,7 @@
 package com.sishui.words.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
@@ -13,13 +14,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 public class MyBatisPlusConfig {
 
     @Bean
-    public PaginationInnerInterceptor paginationInnerInterceptor() {
-        PaginationInnerInterceptor paginationInterceptor = new PaginationInnerInterceptor();
-        // 设置最大单页限制数量，默认 500 条，-1 不受限制
-        paginationInterceptor.setMaxLimit(-1L);
-        paginationInterceptor.setDbType(DbType.MYSQL);
-        // 开启 count 的 join 优化,只针对部分 left join
-        paginationInterceptor.setOptimizeJoin(true);
-        return paginationInterceptor;
+    public MybatisPlusInterceptor mybatisPlusInterceptor() {
+        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        // 添加分页插件
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
+        return interceptor;
     }
 }

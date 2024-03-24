@@ -19,10 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/bbs")
@@ -190,12 +187,12 @@ public class TopicController {
 
         //ID
         topicResponse.setId(topic.getTopicId());
-
-
+        List<Image> images = imageService.getImageListById(topic.getTopicId());
+        List<Map<String, Image>> imagesMapList = this.getImageMapList(images);
         //设置图片
-        //topicResponse.setImages(imageService.getImageListById(topic.getTopicId()));
+        topicResponse.setImages(imagesMapList);
 
-        //评论
+        //评论数量
         topicResponse.setCommentCount(commentService.getCommentCountById(topic.getTopicId()));
         //话题
         topicResponse.setSubjects(subjectService.getSubjectListByTopicId(topic.getTopicId()));
@@ -209,6 +206,8 @@ public class TopicController {
         topicResponse.setLikeCount(topic.getLikeCount());
         topicResponse.setPostType(Constants.ZHUIGE_TOPIC.getValue());
         topicResponse.setLimit("free");
+        //评论内容
+        topicResponse.setComments(commentService.getCommentListByPostId(topic.getTopicId()));
         data.put("topic", topicResponse);
         return Result.success(data);
     }
@@ -221,6 +220,16 @@ public class TopicController {
         private String token;
         private Integer topicId;
         private String userId;
+    }
+
+    private List<Map<String, Image>> getImageMapList(List<Image> images) {
+        List<Map<String, Image>> ret = new ArrayList<>();
+        for (Image image : images) {
+            Map<String, Image> map = new HashMap<>();
+            map.put("image", image);
+            ret.add(map);
+        }
+        return ret;
     }
 
 
