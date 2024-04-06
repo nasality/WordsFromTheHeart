@@ -8,6 +8,7 @@ import com.sishui.words.mapper.TopicMapper;
 import com.sishui.words.pojo.Image;
 import com.sishui.words.pojo.Topic;
 import com.sishui.words.service.IImageService;
+import com.sishui.words.util.HttpRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,5 +21,16 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, Image> implements
         QueryWrapper<Image> wrapper = new QueryWrapper<>();
         wrapper.eq("topic_id", topicId);
         return baseMapper.selectList(wrapper);
+    }
+
+    @Override
+    public void imagesSave(List<String> imageList, Integer contentId) {
+        for (String path : imageList) {
+            Image newImage = HttpRequest.getImageInfo(path);
+            assert newImage != null;
+            newImage.setTopicId(contentId);
+
+            baseMapper.insert(newImage);
+        }
     }
 }

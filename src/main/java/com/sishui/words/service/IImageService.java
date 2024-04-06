@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface IImageService extends IService<Image> {
     List<Image> getImageListById(Integer topicId);
+
+    void imagesSave(List<String> imageList, Integer contentId);
 }

@@ -5,4 +5,6 @@ import com.sishui.words.pojo.TopicForumRelation;
 
 public interface ITopicForumRelationService extends IService<TopicForumRelation> {
     TopicForumRelation getTopicForumRelationByTopicId(Integer topicId);
+
+    void forumSave(Integer forumId, Integer activityId);
 }

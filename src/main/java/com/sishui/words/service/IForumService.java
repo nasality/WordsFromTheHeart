@@ -9,4 +9,6 @@ public interface IForumService extends IService<Forum> {
     List<Forum> getListById(Integer id);
 
     Forum getForumByTopicId(Integer topicId);
+
+    void forumSave(String forumId, Integer activityId);
 }

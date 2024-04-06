@@ -4,14 +4,13 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.sishui.words.pojo.Follow;
+import com.sishui.words.pojo.Tab;
 import com.sishui.words.pojo.User;
 import com.sishui.words.req.UserREQ;
-import com.sishui.words.service.IContentService;
-import com.sishui.words.service.IFollowService;
-import com.sishui.words.service.ITopicService;
-import com.sishui.words.service.IUserService;
+import com.sishui.words.service.*;
 import com.sishui.words.service.impl.TopicServiceImpl;
 import com.sishui.words.service.impl.WeChatAuthServiceImpl;
+import com.sishui.words.util.HttpRequest;
 import com.sishui.words.vo.*;
 import org.apache.ibatis.io.ResolverUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/user")
@@ -31,8 +27,8 @@ public class UserController {
 
     @Autowired
     private IUserService userService;
-
-
+    @Autowired
+    private ITabService tabService;
 
     @PostMapping("/login")
     private Result login(@RequestBody LoginRequest loginRequest) throws Exception {
@@ -60,8 +56,10 @@ public class UserController {
             user.setFirst(1);
             user.setAvatar(Constants.DEFAULT_AVATAR.getValue());
             userService.getBaseMapper().insert(user);
+            //腾讯IM创建账号
+            HttpRequest.accountImport(user.getUserId(), user.getNickname(), user.getAvatar());
         } else {
-            user.setNickname(nickname);
+            //user.setNickname(nickname);
             user.setLastLoginTime(Timestamp.from(Instant.now()));
             user.setFirst(0);
             userService.getBaseMapper().updateById(user);
@@ -252,6 +250,50 @@ public class UserController {
         } else {
             return Result.error("修改失败");
         }
+    }
+
+    @PostMapping("/home")
+    public Result getUserHome(@RequestBody User user) {
+        if (user == null) {
+            return Result.error("参数为空");
+        }
+        String userId = user.getUserId();
+        if (StringUtils.isEmpty(userId)) {
+            return Result.error("用户不存在");
+        }
+
+        User userDetial = userService.getById(userId);
+        userDetial.setIsMe(Objects.equals(user.getUserId(), userDetial.getUserId()) ? 1 : 0);
+        user.setPassword(null);
+
+        UserDataVO userDataVO = new UserDataVO();
+
+        QueryWrapper<Follow> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("follower_id", userId);
+
+        //获赞
+        userDataVO.setLikeMeCount(topicService.countTotalLikesByUserId(userId));
+        //粉丝
+        userDataVO.setFansCount(userDetial.getFansCount());
+        //关注
+        userDataVO.setFollowCount(Math.toIntExact(followService.getBaseMapper().selectCount(queryWrapper)));
+        //动态
+        userDataVO.setPostCount(userService.getPostCount(userId));
+        //昵称
+        userDataVO.setNickname(userDetial.getNickname());
+        //头像
+        userDataVO.setAvatar(userDetial.getAvatar());
+        Map<String, Object> ret = new HashMap<>();
+        //tabs
+        List<Tab> tabs = tabService.getUserHomeTabs(user.getUserId());
+
+        //私信按钮
+        ret.put("btn_message", 1);
+        ret.put("btn_promotion", 1);
+        ret.put("stat", userDataVO);
+        ret.put("user", userDetial);
+        ret.put("tabs", tabs);
+        return Result.success(ret);
     }
 
 }

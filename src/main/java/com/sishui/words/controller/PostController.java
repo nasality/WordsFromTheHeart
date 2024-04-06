@@ -39,6 +39,7 @@ public class PostController {
     @Autowired
     private ICommentService commentService;
 
+
     /**
      * 获取最新的文章列表
      * @return Result
@@ -50,41 +51,54 @@ public class PostController {
         //置顶数量
         data.put("sticky_count", 0);
 
+        switch(request.getPostType()) {
+            case "1" : {
+                getTopicList(data, request);
+            }
+            case "2" : {
+
+            }
+        }
+
+
+
+
+        return Result.success(data);
+    }
+
+    private void getTopicList(Map<String, Object> data, HomeListRequest request) {
         //话题列表
         List<TopicResponseVO> topicList = new ArrayList<>();
 
-        if (Objects.equals(request.getPostType(), "1")) {
-            List<Topic> rawTopicList = topicService.selectTopicPage(request);
+        List<Topic> rawTopicList = topicService.selectTopicPage(request);
 
-            for (Topic record : rawTopicList) {
-                TopicResponseVO topicResponseVO = new TopicResponseVO();
-                topicResponseVO.setAddress(record.getLocation());
-                topicResponseVO.setId(record.getTopicId());
-                topicResponseVO.setTime(DateFormat.timeStamp2DateString(record.getCreateTime()));
-                topicResponseVO.setType("image");
-                topicResponseVO.setSubjects(subjectService.getSubjectListByTopicId(record.getTopicId()));
-                topicResponseVO.setAuthor(userService.getById(record.getUserId()));
-                topicResponseVO.setLimit("free");
-                topicResponseVO.setPostType(Constants.ZHUIGE_TOPIC.getValue());
+        for (Topic record : rawTopicList) {
+            TopicResponseVO topicResponseVO = new TopicResponseVO();
+            topicResponseVO.setAddress(record.getLocation());
+            topicResponseVO.setId(record.getTopicId());
+            topicResponseVO.setTime(DateFormat.timeStamp2DateString(record.getCreateTime()));
+            topicResponseVO.setType("image");
+            topicResponseVO.setSubjects(subjectService.getSubjectListByTopicId(record.getTopicId()));
+            topicResponseVO.setAuthor(userService.getById(record.getUserId()));
+            topicResponseVO.setLimit("free");
+            topicResponseVO.setPostType(Constants.ZHUIGE_TOPIC.getValue());
 
-                topicResponseVO.setForum(forumService.getForumByTopicId(record.getTopicId()));
-                topicResponseVO.setExcerpt(record.getTopicDetail());
-                List<Image> images = imageService.getImageListById(record.getTopicId());
-                List<Map<String, Image>> imagesMapList = this.getImageMapList(images);
-                topicResponseVO.setImages(imagesMapList);
-                topicResponseVO.setLikeCount(record.getLikeCount());
-                //设置评论数量
-                topicResponseVO.setCommentCount(0L);
-                //获取评论
-                topicResponseVO.setComments(commentService.getCommentListByPostId(record.getTopicId()));
+            topicResponseVO.setForum(forumService.getForumByTopicId(record.getTopicId()));
+            topicResponseVO.setExcerpt(record.getTopicDetail());
+            List<Image> images = imageService.getImageListById(record.getTopicId());
+            List<Map<String, Image>> imagesMapList = this.getImageMapList(images);
+            topicResponseVO.setImages(imagesMapList);
+            topicResponseVO.setLikeCount(record.getLikeCount());
+            //设置评论数量
+            topicResponseVO.setCommentCount(0L);
+            //获取评论
+            topicResponseVO.setComments(commentService.getCommentListByPostId(record.getTopicId()));
 
-                topicList.add(topicResponseVO);
-                //设置评论数量
-                topicResponseVO.setCommentCount(commentService.getCommentCountById(record.getTopicId()));
-                //获取评论
-                //topicResponseVO.setComments(commentService.getCommentListByPostId(record.getTopicId()));
-
-            }
+            topicList.add(topicResponseVO);
+            //设置评论数量
+            topicResponseVO.setCommentCount(commentService.getCommentCountById(record.getTopicId()));
+            //获取评论
+            //topicResponseVO.setComments(commentService.getCommentListByPostId(record.getTopicId()));
 
         }
 
@@ -94,7 +108,7 @@ public class PostController {
         } else {
             data.put("more", "more");
         }
-        return Result.success(data);
+
     }
 
     private List<Map<String, Image>> getImageMapList(List<Image> images) {

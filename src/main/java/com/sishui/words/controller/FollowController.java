@@ -4,6 +4,7 @@ import com.sishui.words.mapper.FollowMapper;
 import com.sishui.words.pojo.Follow;
 import com.sishui.words.service.IFollowService;
 import com.sishui.words.service.IUserService;
+import com.sishui.words.util.HttpRequest;
 import com.sishui.words.vo.Result;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -35,6 +36,10 @@ public class FollowController {
         if (followService.getByFollowerIdAndFollowedId(request.getFollowerId(), request.getUserId() )!= null) {
              followService.unFollow(request.getFollowerId(), request.getUserId());
              flag = false;
+             //腾讯IM取消关注
+             String[] userIds = new String[1];
+             userIds[0] = request.getUserId();
+             HttpRequest.deleteFriends(request.getFollowerId(), userIds);
         } else {
 
             follow.setFollowerId(request.getFollowerId());
@@ -42,7 +47,8 @@ public class FollowController {
             follow.setFollowTime(new Timestamp(System.currentTimeMillis()));
             userService.follow(request.userId);
             flag = followService.save(follow);
-
+            //腾讯IM添加关注
+            HttpRequest.addFriend(request.getFollowerId(), request.getUserId());
         }
         data.put("isFollow", flag);
         return Result.success(data);

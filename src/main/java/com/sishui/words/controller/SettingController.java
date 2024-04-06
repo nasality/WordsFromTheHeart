@@ -92,6 +92,13 @@ public class SettingController {
         data.put("require_login", 1);
         data.put("title", "图文");
         dataList.add(data);
+        Map<String, Object> data1 = new HashMap<>();
+        data1.put("image", "https://q.zhuige.com/wp-content/uploads/2022/07/sp.png");
+        data1.put("link", "/pages/bbs/activity-publish/activity-publish");
+        data1.put("require_login", 1);
+        data1.put("title", "活动");
+        dataList.add(data1);
+
         map.put("items", dataList);
         return Result.success(map);
     }

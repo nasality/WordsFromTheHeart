@@ -33,4 +33,9 @@ public class ForumServiceImpl extends ServiceImpl<ForumMapper, Forum> implements
         wrapper.eq("id", topicForumRelation.getForumId());
         return baseMapper.selectOne(wrapper);
     }
+
+    @Override
+    public void forumSave(String forumId, Integer activityId) {
+
+    }
 }

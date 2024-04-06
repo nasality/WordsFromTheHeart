@@ -9,4 +9,6 @@ public interface ITabService extends IService<Tab> {
     List<Tab> getTabListSortByHotness();
 
     List<Tab> getHomeTabList();
+
+    List<Tab> getUserHomeTabs(String userId);
 }

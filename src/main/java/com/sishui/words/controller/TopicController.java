@@ -166,7 +166,7 @@ public class TopicController {
 
         //检查是否已关注作者
         if (request.getUserId() != null) {
-            boolean isFollow = followService.isFollowingUser(user.getUserId(), request.getUserId());
+            boolean isFollow = followService.isFollowingUser(request.getUserId(), user.getUserId());
             user.setIsFollow(isFollow ? 1 : 0);
             //是否已评论，是否已点赞，是否已收藏
             topicResponse.setIsComment(commentService.getIsCommentByUserIdAndTopicId(user.getUserId(), topic.getTopicId()));

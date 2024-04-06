@@ -29,4 +29,14 @@ public class TabServiceImpl extends ServiceImpl<TabMapper, Tab>  implements ITab
         ret.add(tab1);
         return ret;
     }
+
+    @Override
+    public List<Tab> getUserHomeTabs(String userId) {
+        List<Tab> ret = new ArrayList<>();
+        Tab tab = new Tab(1, "话题", 1);
+        ret.add(tab);
+        Tab tab1 = new Tab(2, "活动", 2);
+        ret.add(tab1);
+        return ret;
+    }
 }

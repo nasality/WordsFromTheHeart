@@ -18,4 +18,16 @@ public class TopicForumRelationServiceImpl extends ServiceImpl<TopicForumRelatio
         wrapper.eq("topic_id", topicId);
         return baseMapper.selectOne(wrapper);
     }
+
+    @Override
+    public void forumSave(Integer forumId, Integer activityId) {
+        if (forumId == null || activityId == null) {
+            return;
+        }
+        TopicForumRelation topicForumRelation = new TopicForumRelation();
+        topicForumRelation.setForumId(forumId);
+        topicForumRelation.setTopicId(activityId);
+        // 保存 TopicForumRelation 对象到数据库中
+        save(topicForumRelation);
+    }
 }
