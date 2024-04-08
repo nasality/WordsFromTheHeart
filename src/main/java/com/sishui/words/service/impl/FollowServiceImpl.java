@@ -64,6 +64,29 @@ public class FollowServiceImpl extends ServiceImpl<FollowMapper, Follow> impleme
         return baseMapper.delete(wrapper) > 0;
     }
 
+    @Override
+    public Integer getUserRelationship(String userId1, String userId2) {
+        QueryWrapper<Follow> wrapper = new QueryWrapper<>();
+        wrapper.eq("follower_id", userId1);
+        wrapper.eq("followed_id", userId2);
+        Follow left = baseMapper.selectOne(wrapper);
+
+        QueryWrapper<Follow> wrapper1 = new QueryWrapper<>();
+        wrapper1.eq("follower_id", userId2);
+        wrapper1.eq("followed_id", userId1);
+        Follow right = baseMapper.selectOne(wrapper1);
+        if (left != null && right != null) {
+            return 3;
+        }
+        if (left != null) {
+            return 1;
+        }
+        if (right != null) {
+            return 2;
+        }
+        return 0;
+    }
+
 
     /**
      * A 是否 关注 B

@@ -20,4 +20,6 @@ public interface  IFollowService extends IService<Follow> {
     Follow getByFollowerIdAndFollowedId(String followerId, String userId);
 
     boolean unFollow(String followerId, String userId);
+
+    Integer getUserRelationship(String userId1, String userId2);
 }

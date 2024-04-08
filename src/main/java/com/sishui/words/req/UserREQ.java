@@ -14,4 +14,7 @@ public class UserREQ extends BaseRequest<Follow> {
 
     @ApiModelProperty(value = "用户id")
     private String userId;
+
+    @ApiModelProperty(value = "作者id")
+    private String authorUserId;
 }

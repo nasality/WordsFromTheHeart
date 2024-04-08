@@ -253,39 +253,38 @@ public class UserController {
     }
 
     @PostMapping("/home")
-    public Result getUserHome(@RequestBody User user) {
-        if (user == null) {
+    public Result getUserHome(@RequestBody UserREQ userREQ) {
+        if (userREQ == null) {
             return Result.error("参数为空");
         }
-        String userId = user.getUserId();
-        if (StringUtils.isEmpty(userId)) {
-            return Result.error("用户不存在");
-        }
+        String authorId = userREQ.getAuthorUserId();
+        String userId = userREQ.getUserId();
 
-        User userDetial = userService.getById(userId);
-        userDetial.setIsMe(Objects.equals(user.getUserId(), userDetial.getUserId()) ? 1 : 0);
-        user.setPassword(null);
+        User userDetial = userService.getById(userREQ.getAuthorUserId());
+        userDetial.setIsMe(Objects.equals(userId, authorId) ? 1 : 0);
+        userDetial.setIsFollow(followService.getUserRelationship(userId, authorId));
+
 
         UserDataVO userDataVO = new UserDataVO();
 
         QueryWrapper<Follow> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("follower_id", userId);
+        queryWrapper.eq("follower_id", authorId);
 
         //获赞
-        userDataVO.setLikeMeCount(topicService.countTotalLikesByUserId(userId));
+        userDataVO.setLikeMeCount(topicService.countTotalLikesByUserId(authorId));
         //粉丝
         userDataVO.setFansCount(userDetial.getFansCount());
         //关注
         userDataVO.setFollowCount(Math.toIntExact(followService.getBaseMapper().selectCount(queryWrapper)));
         //动态
-        userDataVO.setPostCount(userService.getPostCount(userId));
+        userDataVO.setPostCount(userService.getPostCount(authorId));
         //昵称
         userDataVO.setNickname(userDetial.getNickname());
         //头像
         userDataVO.setAvatar(userDetial.getAvatar());
         Map<String, Object> ret = new HashMap<>();
         //tabs
-        List<Tab> tabs = tabService.getUserHomeTabs(user.getUserId());
+        List<Tab> tabs = tabService.getUserHomeTabs(authorId);
 
         //私信按钮
         ret.put("btn_message", 1);
