@@ -1,19 +1,12 @@
 package com.sishui.words.controller;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.sishui.words.pojo.Image;
+
 import com.sishui.words.pojo.Topic;
 import com.sishui.words.req.HomeListRequest;
 import com.sishui.words.service.*;
-import com.sishui.words.util.DateFormat;
-import com.sishui.words.vo.Constants;
-import com.sishui.words.vo.HomeData;
 import com.sishui.words.vo.Result;
 import com.sishui.words.vo.TopicResponseVO;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,16 +22,7 @@ public class PostController {
     @Autowired
     private ITopicService topicService;
     @Autowired
-    private ISubjectService subjectService;
-    @Autowired
-    private IUserService userService;
-    @Autowired
-    private IForumService forumService;
-    @Autowired
-    private IImageService imageService;
-    @Autowired
-    private ICommentService commentService;
-
+    private IContentRecommendService recommendService;
 
     /**
      * 获取最新的文章列表
@@ -47,79 +31,21 @@ public class PostController {
     @PostMapping("list_last2")
     public Result getHomeListLast(@RequestBody HomeListRequest request) {
         Map<String, Object> data = new HashMap<>();
-
-        //置顶数量
         data.put("sticky_count", 0);
 
-        switch(request.getPostType()) {
-            case "1" : {
-                getTopicList(data, request);
-            }
-            case "2" : {
-
-            }
+        List<Topic> topicList;
+        if (request.getUserId() == null) {
+            topicList = topicService.selectTopicPage(request);
+        } else {
+            topicList = recommendService.recommendTopics(request.getUserId(), request.getOffset(), request.getSize());
         }
-
-
-
-
-        return Result.success(data);
-    }
-
-    private void getTopicList(Map<String, Object> data, HomeListRequest request) {
-        //话题列表
-        List<TopicResponseVO> topicList = new ArrayList<>();
-
-        List<Topic> rawTopicList = topicService.selectTopicPage(request);
-
-        for (Topic record : rawTopicList) {
-            TopicResponseVO topicResponseVO = new TopicResponseVO();
-            topicResponseVO.setAddress(record.getLocation());
-            topicResponseVO.setId(record.getTopicId());
-            topicResponseVO.setTime(DateFormat.timeStamp2DateString(record.getCreateTime()));
-            topicResponseVO.setType("image");
-            topicResponseVO.setSubjects(subjectService.getSubjectListByTopicId(record.getTopicId()));
-            topicResponseVO.setAuthor(userService.getById(record.getUserId()));
-            topicResponseVO.setLimit("free");
-            topicResponseVO.setPostType(Constants.ZHUIGE_TOPIC.getValue());
-
-            topicResponseVO.setForum(forumService.getForumByTopicId(record.getTopicId()));
-            topicResponseVO.setExcerpt(record.getTopicDetail());
-            List<Image> images = imageService.getImageListById(record.getTopicId());
-            List<Map<String, Image>> imagesMapList = this.getImageMapList(images);
-            topicResponseVO.setImages(imagesMapList);
-            topicResponseVO.setLikeCount(record.getLikeCount());
-            //设置评论数量
-            topicResponseVO.setCommentCount(0L);
-            //获取评论
-            topicResponseVO.setComments(commentService.getCommentListByPostId(record.getTopicId()));
-
-            topicList.add(topicResponseVO);
-            //设置评论数量
-            topicResponseVO.setCommentCount(commentService.getCommentCountById(record.getTopicId()));
-            //获取评论
-            //topicResponseVO.setComments(commentService.getCommentListByPostId(record.getTopicId()));
-
-        }
-
-        data.put("topics", topicList);
+        List<TopicResponseVO> topicResponseVOList = topicService.topicProcess(topicList);
+        data.put("topics", topicResponseVOList);
         if (topicList.size() < PAGE_SIZE) {
             data.put("more", "nomore");
         } else {
             data.put("more", "more");
         }
-
+        return Result.success(data);
     }
-
-    private List<Map<String, Image>> getImageMapList(List<Image> images) {
-        List<Map<String, Image>> ret = new ArrayList<>();
-        for (Image image : images) {
-            Map<String, Image> map = new HashMap<>();
-            map.put("image", image);
-            ret.add(map);
-        }
-        return ret;
-    }
-
-
 }

@@ -29,7 +29,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public List<User> recommendUsers(Integer userId) {
-        //TODO 算法需改善
+       /* //TODO 算法需改善
         List<User> recommendedUsers = new ArrayList<>();
 
         // 获取当前用户的标签列表
@@ -40,11 +40,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         List<User> allUserWithoutSelfFollow = userService.getUsersWithoutSelfFollow(userId);
 
         // 获取其他用户的标签列表，并计算与当前用户的标签重复度
-        Map<Integer, Double> userTagSimilarityMap = new HashMap<>();
+        Map<String, Double> userTagSimilarityMap = new HashMap<>();
         List<UserTagRelation> allUserTags = userTagRelationService.getBaseMapper().selectList(new QueryWrapper<UserTagRelation>().ne("user_id", userId));
 
         for (UserTagRelation userTagRelation : allUserTags) {
-            Integer otherUserId = userTagRelation.getUserId();
+            String otherUserId = userTagRelation.getUserId();
             Set<Integer> otherUserTagIds = allUserTags.stream().map(UserTagRelation::getTagId).collect(Collectors.toSet());
 
             // 计算标签重复度
@@ -74,7 +74,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             recommendedUsers.add(recommendedUser);
         }
 
-        return recommendedUsers;
+        return recommendedUsers;*/
+        return null;
     }
 
     @Override

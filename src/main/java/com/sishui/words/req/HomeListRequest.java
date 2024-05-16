@@ -11,4 +11,5 @@ import lombok.NoArgsConstructor;
 public class HomeListRequest extends BaseRequest<Topic>{
     private String os;
     private String postType;
+    private String userId;
 }

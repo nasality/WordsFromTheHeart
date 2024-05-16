@@ -6,7 +6,6 @@ import com.sishui.words.service.IActivityService;
 import com.sishui.words.service.IImageService;
 import com.sishui.words.service.ITopicForumRelationService;
 import com.sishui.words.vo.Result;
-import com.sishui.words.vo.TopicResponseVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;

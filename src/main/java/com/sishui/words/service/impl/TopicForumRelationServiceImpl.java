@@ -7,6 +7,9 @@ import com.sishui.words.pojo.TopicForumRelation;
 import com.sishui.words.service.ITopicForumRelationService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class TopicForumRelationServiceImpl extends ServiceImpl<TopicForumRelationMapper, TopicForumRelation> implements ITopicForumRelationService {
     @Override
@@ -29,5 +32,13 @@ public class TopicForumRelationServiceImpl extends ServiceImpl<TopicForumRelatio
         topicForumRelation.setTopicId(activityId);
         // 保存 TopicForumRelation 对象到数据库中
         save(topicForumRelation);
+    }
+
+    @Override
+    public List<Integer> getForumsByTopicId(Integer topicId) {
+        QueryWrapper<TopicForumRelation> wrapper = new QueryWrapper<>();
+        wrapper.eq("topic_id", topicId);
+        List<TopicForumRelation> topicForumRelations = baseMapper.selectList(wrapper);
+        return topicForumRelations.stream().map(TopicForumRelation::getForumId).collect(Collectors.toList());
     }
 }

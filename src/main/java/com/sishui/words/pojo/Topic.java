@@ -1,6 +1,7 @@
 package com.sishui.words.pojo;
 
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.sishui.words.dto.Content;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,7 +10,7 @@ import java.sql.Timestamp;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Topic {
+public class Topic extends Content {
     @TableId("topic_id")
     private Integer topicId;
     private String userId;

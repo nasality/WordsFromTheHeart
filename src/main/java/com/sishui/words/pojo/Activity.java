@@ -3,6 +3,7 @@ package com.sishui.words.pojo;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.sishui.words.dto.Content;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,7 +16,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Activity {
+public class Activity extends Content {
     @TableId(value = "activity_id", type = IdType.AUTO)
     private Integer activityId;
     private String userId;

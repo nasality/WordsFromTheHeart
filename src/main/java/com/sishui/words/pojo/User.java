@@ -24,7 +24,7 @@ public class User {
     private Timestamp registrationDate;
     private Timestamp lastLoginTime;
     private Date birthday;
-    private String role;
+    private Integer state;
     @TableField(exist = false)
     private Integer first;
     private String cover;

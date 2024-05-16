@@ -9,9 +9,9 @@ import java.sql.Timestamp;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName("tag")
-public class Tag {
-    private Integer tagId;
-    private String tagName;
-    private Timestamp createTime;
+@TableName("user_tag")
+public class UserTag {
+    private String userId;
+    private Integer forumId;
+    private Integer hotnessIndex;
 }

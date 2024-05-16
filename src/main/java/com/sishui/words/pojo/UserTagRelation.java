@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserTagRelation {
-    private Integer userId;
+    private String userId;
     private Integer tagId;
+    private Integer hotnessIndex;
 }
